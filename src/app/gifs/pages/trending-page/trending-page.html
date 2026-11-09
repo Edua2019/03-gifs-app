@@ -4,7 +4,10 @@
 </section> -->
 
 
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-5">
+<div class="h-screen overflow-y-scroll  grid grid-cols-2 md:grid-cols-4 gap-4 pt-5"
+  (scroll)="onScroll($event)"
+  #goupDiv
+>
 
   @for (group of gifsService.trendingGifGroup(); track $index) {
     <div class="grid gap-4">
