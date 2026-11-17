@@ -1,14 +1,16 @@
-import { Component, ElementRef, inject, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, viewChild } from '@angular/core';
 import { GifService } from '../../services/gifs.service';
+import { ScrollStateService } from 'src/app/shared/services/scroll-state.services';
 
 
 @Component({
   selector: 'app-trending-page',
   templateUrl: './trending-page.html',
 })
-export default class TrendingPage {
+export default class TrendingPage  implements AfterViewInit{
 
   gifsService = inject( GifService );
+  scrollStateServices = inject (ScrollStateService);
 
   /*
      el viw Child y el viewChildren nos van a servir para tomar referencias o información del HTML (elementos - piesas)
@@ -16,6 +18,13 @@ export default class TrendingPage {
      viewChildren nos va a servir para tomar una referencia de varios elementos
    */
   scrollDivRef = viewChild<ElementRef<HTMLDivElement>>('goupDiv');
+
+  ngAfterViewInit(): void {
+    const scrolDiv = this.scrollDivRef()?.nativeElement;
+    if(!scrolDiv) return;
+
+    scrolDiv.scrollTop = this.scrollStateServices.trendingScrollState();
+  }
 
   onScroll(EVENT: Event){
     const scrolDiv = this.scrollDivRef()?.nativeElement;
@@ -35,8 +44,9 @@ export default class TrendingPage {
 
     // Este es un booleano que nos dice si esteamos al final
     const isAtBottom = scrollTop + clientHeight + 300 >= scrollHeight;
+    this.scrollStateServices.trendingScrollState.set(scrollTop);
 
-    console.log({isAtBottom});
+    // console.log({isAtBottom});
     if(isAtBottom){
       this.gifsService.loadTrendingGifs();
     }

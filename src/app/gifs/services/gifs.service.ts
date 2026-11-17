@@ -57,12 +57,13 @@ export class GifService {
       params:{
         api_key: environment.giphyApiKey,
         limit: 20,
-        //ofifset: this.trendingPage() * 20
+        offset: this.trendingPage() * 20,
       },
     }).subscribe( (resp) => {
 
       const gifs = GifMapper.mapGiphyItemsToGifArray(resp.data);
       this.trendingGifs.update((currentGifs) => [...currentGifs, ...gifs]);
+      this.trendingPage.update( current => current + 1);
       this.trendingGifsLoading.set(false);
     });
 
